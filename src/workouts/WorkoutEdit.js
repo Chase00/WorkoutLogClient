@@ -7,11 +7,26 @@ const WorkoutEdit = (props) => {
     const [editDef, setEditDef] = useState(props.workoutToUpdate.definition);
     const [editRes, setEditRes] = useState(props.workoutToUpdate.result);
 
+    const workoutUpdate = (event, workout) => {
+        event.preventDefault();
+        fetch(`http://localhost:3000/api/log/${props.workoutToUpdate.id}`, {
+            method: 'PUT',
+            body: JSON.stringify({description: editDesc, definition: editDef, result: editRes}),
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'Authorization': props.token
+            })
+        }) .then((res) => {
+            props.fetchWorkouts();
+            props.updateOff();
+        })
+    }
+
     return(
         <Modal isOpen={true}>
             <ModalHeader>Log a Workout</ModalHeader>
             <ModalBody>
-                <Form>
+                <Form onSubmit={workoutUpdate}>
                     <FormGroup>
                         <Label htmlFor="result">Edit Result: </Label>
                         <Input name="result" value={editRes} onChange={(e) => setEditRes(e.target.value)}/>
